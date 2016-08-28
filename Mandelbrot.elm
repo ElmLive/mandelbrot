@@ -2,6 +2,7 @@ module Mandelbrot
     exposing
         ( Model
         , init
+        , zoomViewport
         , computeCell
         , computeRow
         , computeAll
@@ -15,7 +16,7 @@ import Complex exposing (Complex)
 
 
 maxIterations =
-    200
+    50
 
 
 type alias Point =
@@ -41,9 +42,32 @@ init size =
     }
 
 
+zoomViewport : Int -> Int -> Model -> Model
+zoomViewport row col model =
+    let
+        focus =
+            complexNumberForPoint model row col
+    in
+        { model
+            | min =
+                Complex.complex
+                    ((model.min.re + focus.re) / 2)
+                    ((model.min.im + focus.im) / 2)
+            , max =
+                Complex.complex
+                    ((model.max.re + focus.re) / 2)
+                    ((model.max.im + focus.im) / 2)
+            , computed = Dict.empty
+        }
+
+
 calculate : Int -> Complex -> Int -> Complex -> Maybe Int
 calculate maxIterations c iterations z =
     let
+        -- az =
+        --     Complex.complex
+        --         (abs z.re)
+        --         (abs z.im)
         -- z' = z^2 + c
         z' =
             Complex.mult z z
@@ -57,19 +81,25 @@ calculate maxIterations c iterations z =
             calculate maxIterations c (iterations + 1) z'
 
 
-computeCell : Int -> Int -> Model -> Model
-computeCell row col model =
+complexNumberForPoint : Model -> Int -> Int -> Complex
+complexNumberForPoint model row col =
     let
         colPercent =
             toFloat col / toFloat model.width
 
         rowPercent =
             toFloat row / toFloat model.height
+    in
+        Complex.complex
+            (model.min.re + (model.max.re - model.min.re) * colPercent)
+            (model.min.im + (model.max.im - model.min.im) * rowPercent)
 
+
+computeCell : Int -> Int -> Model -> Model
+computeCell row col model =
+    let
         c =
-            Complex.complex
-                (model.min.re + (model.max.re - model.min.re) * colPercent)
-                (model.min.im + (model.max.im - model.min.im) * rowPercent)
+            complexNumberForPoint model row col
 
         value =
             calculate maxIterations c 0 c

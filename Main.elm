@@ -2,13 +2,23 @@ module Main exposing (..)
 
 import Mandelbrot
 import IncrementalMandelbrot
+import ZoomingMandelbrot
 import Html.App
 
 
+-- main =
+--     Mandelbrot.init 250
+--         |> Mandelbrot.computeAll
+--         |> Mandelbrot.view
+--
+
+
 main =
-    Mandelbrot.init 400
-        |> Mandelbrot.computeAll
-        |> Mandelbrot.view
+    Html.App.beginnerProgram
+        { model = ZoomingMandelbrot.init 200
+        , update = ZoomingMandelbrot.update
+        , view = ZoomingMandelbrot.view
+        }
 
 
 
