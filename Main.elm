@@ -4,6 +4,6 @@ import Mandelbrot
 
 
 main =
-    Mandelbrot.init 100
+    Mandelbrot.init 400
         |> Mandelbrot.computeAll
         |> Mandelbrot.view
