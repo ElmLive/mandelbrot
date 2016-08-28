@@ -1,4 +1,12 @@
-module Mandelbrot exposing (Model, init, computeCell, computeRow, view)
+module Mandelbrot
+    exposing
+        ( Model
+        , init
+        , computeCell
+        , computeRow
+        , computeAll
+        , view
+        )
 
 import Dict exposing (Dict)
 import Html exposing (..)
@@ -55,7 +63,6 @@ computeCell row col model =
 
         value =
             calculate maxIterations c 0 c
-                |> Debug.log (toString c)
     in
         case value of
             Just iterations ->
@@ -72,6 +79,11 @@ computeCell row col model =
 computeRow : Int -> Model -> Model
 computeRow row model =
     List.foldl (computeCell row) model [0..model.width]
+
+
+computeAll : Model -> Model
+computeAll model =
+    List.foldl computeRow model [0..model.height]
 
 
 view : Model -> Html msg
