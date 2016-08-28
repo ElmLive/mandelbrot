@@ -5,6 +5,8 @@ import Mandelbrot
 
 main =
     Mandelbrot.init 100
-        |> Mandelbrot.computeCell ( 5, 5 )
-        |> Mandelbrot.computeCell ( 99, 99 )
+        |> Mandelbrot.computeRow 5
+        |> Mandelbrot.computeRow 6
+        |> Mandelbrot.computeRow 10
+        |> Mandelbrot.computeRow 20
         |> Mandelbrot.view
