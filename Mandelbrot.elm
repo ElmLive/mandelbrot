@@ -12,6 +12,7 @@ module Mandelbrot
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import Complex exposing (Complex)
 
 
@@ -126,19 +127,21 @@ computeAll model =
     List.foldl computeRow model [0..model.height]
 
 
-view : Model -> Html msg
-view model =
+view : (( Int, Int ) -> msg) -> Model -> Html msg
+view onClickMsg model =
     div [ style [ ( "padding", "8px" ) ] ]
-        (List.map (viewRow model) [0..model.height])
+        (List.map (viewRow onClickMsg model) [0..model.height])
 
 
-viewRow : Model -> Int -> Html msg
-viewRow model row =
+viewRow : (( Int, Int ) -> msg) -> Model -> Int -> Html msg
+viewRow onClickMsg model row =
     div
         [ style
-            [ ( "height", "2px" ) ]
+            [ ( "height", "2px" )
+            , ( "line-height", "2px" )
+            ]
         ]
-        (List.map (viewCell model row) [0..model.width])
+        (List.map (viewCell onClickMsg model row) [0..model.width])
 
 
 determineColor : Int -> String
@@ -159,8 +162,8 @@ determineColor iterations =
             "white"
 
 
-viewCell : Model -> Int -> Int -> Html msg
-viewCell model row col =
+viewCell : (( Int, Int ) -> msg) -> Model -> Int -> Int -> Html msg
+viewCell onClickMsg model row col =
     let
         color =
             Dict.get ( col, row ) model.computed
@@ -171,8 +174,11 @@ viewCell model row col =
             [ style
                 [ ( "width", "2px" )
                 , ( "height", "2px" )
+                , ( "line-height", "2px" )
                 , ( "background-color", color )
                 , ( "display", "inline-block" )
+                , ( "border", "none" )
                 ]
+            , onMouseOut (onClickMsg ( col, row ))
             ]
             []

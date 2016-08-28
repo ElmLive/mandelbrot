@@ -2,6 +2,7 @@ module ZoomingMandelbrot exposing (Model, init, Msg, update, view)
 
 import Mandelbrot
 import Html exposing (..)
+import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 
 
@@ -21,7 +22,7 @@ type Msg
 
 update : Msg -> Model -> Model
 update msg model =
-    case msg of
+    case Debug.log "msg" msg of
         ZoomToward ( x, y ) ->
             model
                 |> Mandelbrot.zoomViewport y x
@@ -31,7 +32,14 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ Mandelbrot.view model
-        , button [ onClick (ZoomToward ( 30, 30 )) ]
-            [ text "Zoom" ]
+        [ Mandelbrot.view ZoomToward model
+          -- , div
+          --     [ onClick (ZoomToward ( 30, 30 ))
+          --     , style
+          --         [ ( "width", "2px" )
+          --         , ( "height", "2px" )
+          --         , ( "border", "1px solid black" )
+          --         ]
+          --     ]
+          --     []
         ]

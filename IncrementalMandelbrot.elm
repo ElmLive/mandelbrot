@@ -56,6 +56,6 @@ update msg model =
 -- VIEW
 
 
-view : Model -> Html msg
-view model =
-    Mandelbrot.view model.fractal
+view : (( Int, Int ) -> msg) -> Model -> Html msg
+view onClickMsg model =
+    Mandelbrot.view onClickMsg model.fractal
