@@ -1,8 +1,9 @@
-module Mandelbrot exposing (Model, init, view)
+module Mandelbrot exposing (Model, init, computeCell, view)
 
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Complex exposing (Complex)
 
 
 type alias Point =
@@ -20,11 +21,48 @@ init : Int -> Model
 init size =
     { width = size
     , height = size
-    , computed =
-        Dict.empty
-            |> Dict.insert ( 5, 5 ) 1
-            |> Dict.insert ( 5, 6 ) 1
+    , computed = Dict.empty
     }
+
+
+calculate : Int -> Complex -> Int -> Complex -> Maybe Int
+calculate maxIterations c iterations z =
+    let
+        -- z' = z^2 + c
+        z' =
+            Complex.mult z z
+                |> Complex.add c
+    in
+        if iterations >= maxIterations then
+            Nothing
+        else if Complex.abs z' >= 2 then
+            Just iterations
+        else
+            calculate maxIterations c (iterations + 1) z'
+
+
+computeCell : Point -> Model -> Model
+computeCell ( col, row ) model =
+    let
+        c =
+            Complex.complex
+                (2 * toFloat col / toFloat model.width)
+                (2 * toFloat row / toFloat model.height)
+
+        value =
+            calculate 100 c 0 c
+                |> Debug.log (toString c)
+    in
+        case value of
+            Just iterations ->
+                { model
+                    | computed = Dict.insert ( col, row ) iterations model.computed
+                }
+
+            Nothing ->
+                { model
+                    | computed = Dict.remove ( col, row ) model.computed
+                }
 
 
 view : Model -> Html msg
