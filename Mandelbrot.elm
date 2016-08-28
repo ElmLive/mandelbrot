@@ -111,16 +111,31 @@ viewRow model row =
         (List.map (viewCell model row) [0..model.width])
 
 
+determineColor : Int -> String
+determineColor iterations =
+    let
+        x =
+            iterations % 5
+    in
+        if x < 1 then
+            "yellow"
+        else if x < 2 then
+            "orange"
+        else if x < 3 then
+            "red"
+        else if x < 4 then
+            "pink"
+        else
+            "white"
+
+
 viewCell : Model -> Int -> Int -> Html msg
 viewCell model row col =
     let
         color =
-            case Dict.get ( col, row ) model.computed of
-                Nothing ->
-                    "black"
-
-                Just _ ->
-                    "yellow"
+            Dict.get ( col, row ) model.computed
+                |> Maybe.map determineColor
+                |> Maybe.withDefault "black"
     in
         div
             [ style
