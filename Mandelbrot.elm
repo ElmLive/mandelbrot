@@ -138,7 +138,6 @@ viewRow onClickMsg model row =
     div
         [ style
             [ ( "height", "2px" )
-            , ( "line-height", "2px" )
             ]
         ]
         (List.map (viewCell onClickMsg model row) [0..model.width])
@@ -178,7 +177,8 @@ viewCell onClickMsg model row col =
                 , ( "background-color", color )
                 , ( "display", "inline-block" )
                 , ( "border", "none" )
+                , ( "vertical-align","top")
                 ]
-            , onMouseOut (onClickMsg ( col, row ))
+            , onClick (onClickMsg ( col, row ))
             ]
             []
