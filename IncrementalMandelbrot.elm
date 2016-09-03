@@ -1,4 +1,4 @@
-module IncrementalMandelbrot exposing (Model, init, Msg, update, view)
+module IncrementalMandelbrot exposing (Model, init, Msg(NoOp), update, view)
 
 import Mandelbrot
 import Task
@@ -23,10 +23,12 @@ init size =
 
 calcNextRowCmd : Cmd Msg
 calcNextRowCmd =
-    Process.sleep 0
-        |> Task.perform
-            (always CalulcateNextRow)
-            (always CalulcateNextRow)
+    Task.succeed ()
+        -- Process.sleep 0
+        |>
+            Task.perform
+                (always CalulcateNextRow)
+                (always CalulcateNextRow)
 
 
 
@@ -35,6 +37,7 @@ calcNextRowCmd =
 
 type Msg
     = CalulcateNextRow
+    | NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -50,6 +53,9 @@ update msg model =
                 )
             else
                 ( model, Cmd.none )
+
+        NoOp ->
+            ( model, Cmd.none )
 
 
 
